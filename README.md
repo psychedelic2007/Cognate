@@ -2,21 +2,21 @@
 
 **Map the labs you are considering, then find where you actually fit.**
 
-Landscape is a local-first research career tool. You add labs you might join, build a profile from your CV or publication record, and get an interactive map that scores each lab on shared ground, what you would uniquely contribute, what you would learn, and whether the work aligns with where you want to go next.
+CogNate is a local-first research career tool. You add labs you might join, build a profile from your CV or publication record, and get an interactive map that scores each lab on shared ground, what you would uniquely contribute, what you would learn, and whether the work aligns with where you want to go next.
 
 Everything runs on your machine. Lab and profile extraction uses a local LLM through [Ollama](https://ollama.com/) by default. Your data never leaves your computer unless you choose to call an external API or OpenAlex for publication lookup.
 
 ---
 
-## Why Landscape exists
+## Why CogNate exists
 
 Choosing a lab is usually done with gut feel and pairwise comparison: read a few websites, compare yourself to one group at a time, and hope the overlap you noticed is the overlap that matters.
 
 That misses three things a network can see:
 
 1. **Scarcity** — a skill that 12 of 15 labs already have is table stakes, not leverage. Only a map of many labs knows which of your strengths are actually rare.
-2. **Intent vs. history** — a broad publication record makes every lab look plausible. Landscape separates what you have done from what you want to do next.
-3. **Portfolio risk** — the top five labs on a ranked list are often near-duplicates. Landscape builds a diversified shortlist, not just a sorted list.
+2. **Intent vs. history** — a broad publication record makes every lab look plausible. CogNate separates what you have done from what you want to do next.
+3. **Portfolio risk** — the top five labs on a ranked list are often near-duplicates. CogNate builds a diversified shortlist, not just a sorted list.
 
 ---
 
@@ -47,8 +47,8 @@ That misses three things a network can see:
 ### Install and run
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/landscape.git
-cd landscape
+git clone https://github.com/YOUR_USERNAME/CogNate.git
+cd CogNate
 npm install
 npm run build
 npm run dev
@@ -65,7 +65,7 @@ ollama serve   # if Ollama is not already running
 
 ### Typical workflow
 
-1. **Set your field** — describe your area or pick the life-sciences starter pack. Landscape builds a shared topic vocabulary.
+1. **Set your field** — describe your area or pick the life-sciences starter pack. CogNate builds a shared topic vocabulary.
 2. **Add labs** — enter a PI name, institution, and research description. Optionally attach `.pdf`, `.md`, or `.txt` files.
 3. **Build your profile** — upload a CV, or look yourself up via OpenAlex (name or ORCID) and import your publications.
 4. **State your direction** — say where you want to go next. This is scored separately from your track record.
@@ -75,7 +75,7 @@ ollama serve   # if Ollama is not already running
 
 ## Architecture
 
-Landscape is a single Node.js server that serves a static SPA and exposes a small JSON API. All scoring and graph logic runs in the browser; the server handles LLM calls, caching, and OpenAlex requests.
+CogNate is a single Node.js server that serves a static SPA and exposes a small JSON API. All scoring and graph logic runs in the browser; the server handles LLM calls, caching, and OpenAlex requests.
 
 ```mermaid
 flowchart LR
@@ -88,7 +88,7 @@ flowchart LR
   subgraph server [Node.js server]
     API[HTTP API]
     LLM[Ollama / Anthropic]
-    Cache[.landscape-cache]
+    Cache[.CogNate-cache]
     OA[OpenAlex client]
     API --> LLM
     API --> Cache
@@ -115,7 +115,7 @@ flowchart LR
 
 ## Data model
 
-Landscape does not use a traditional database. Session state lives in the browser and can be exported to a portable JSON file.
+CogNate does not use a traditional database. Session state lives in the browser and can be exported to a portable JSON file.
 
 ### Session state (`State`)
 
@@ -158,7 +158,7 @@ Exported saves use a versioned envelope:
 
 ```json
 {
-  "format": "landscape",
+  "format": "CogNate",
   "version": 1,
   "savedAt": "2026-08-09T08:00:00.000Z",
   "state": { "labs": [], "vocab": [], "me": null, "field": null },
@@ -174,7 +174,7 @@ Exported saves use a versioned envelope:
 
 ### Server-side cache
 
-LLM responses are cached under `.landscape-cache/` keyed by model, prompt, and mode. Re-analysing unchanged material is instant. Safe to delete at any time.
+LLM responses are cached under `.CogNate-cache/` keyed by model, prompt, and mode. Re-analysing unchanged material is instant. Safe to delete at any time.
 
 ---
 
