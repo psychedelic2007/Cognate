@@ -1,5 +1,5 @@
 # CogNate
-![alt text][cognate_logo]
+![alt text][cognate_logo.png]
 
 **Map the labs you are considering, then find where you actually fit.**
 
