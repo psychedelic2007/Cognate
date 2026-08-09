@@ -35,7 +35,9 @@ That misses three things a network can see:
 
 ---
 
-<video src="cognate_overview.mp4" width="320" height="240" controls></video>
+
+https://github.com/user-attachments/assets/9d151783-2e25-450b-9529-f3295f80ca8d
+
 
 ---
 ## Quick start
