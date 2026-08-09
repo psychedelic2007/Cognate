@@ -1,4 +1,4 @@
-# Landscape
+# CogNate
 
 **Map the labs you are considering, then find where you actually fit.**
 
