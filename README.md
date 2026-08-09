@@ -1,5 +1,5 @@
 # CogNate
-![Uploading Gemini_Generated_Image_z26byuz26byuz26b.png…]()
+![alt text][cognate_logo]
 
 **Map the labs you are considering, then find where you actually fit.**
 
