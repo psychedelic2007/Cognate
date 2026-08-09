@@ -24,7 +24,7 @@ That misses three things a network can see:
 
 - **Interactive lab map** — force-directed graph of labs, topics, and your profile, built with D3
 - **LLM-powered extraction** — turns lab descriptions, PDFs, and CVs into comparable topic vectors
-- **Shared vocabulary** — canonicalises synonyms (`viral evolution` / `virus evolution`) so the graph actually connects
+- **Shared vocabulary** — canonicalises synonyms so the graph actually connects
 - **Multi-axis fit scoring** — Foundation, Leverage, Growth, Direction, and Transfer, with explicit risk flags
 - **Portfolio shortlist** — maximal marginal relevance to avoid five applications to the same niche
 - **OpenAlex integration** — look up authors by name or ORCID, import publications, discover similar PIs
