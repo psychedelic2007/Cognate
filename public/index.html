@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Landscape — find the lab that actually fits</title>
+<link rel="stylesheet" href="./styles.css">
+<div id="app">
+  <header>
+    <div class="wordmark">Land<span>·</span>scape</div>
+    <div class="tagline">Which lab is right for you, and why</div>
+    <div class="counts">
+      <span><b id="c-lab">0</b> labs</span>
+      <span><b id="c-link">0</b> links</span>
+      <span><b id="c-topic">0</b> topics</span>
+      <span class="me"><b id="c-you">—</b></span>
+    </div>
+    <div class="hdr-actions">
+      <button id="btn-load" title="Load a saved map">Open</button>
+      <button id="btn-save" title="Download this map so you never retype it">Save</button>
+    </div>
+    <input type="file" id="load-file" accept=".json" hidden>
+  </header>
+  <div id="setup" hidden>
+    <div class="setup-card">
+      <div class="setup-mark">Land<span>·</span>scape</div>
+      <h1>What do you work on?</h1>
+      <p>Labs and profiles are compared through a shared vocabulary of research topics. That vocabulary has to match your field, or nothing will line up — a vocabulary built for computational biology is useless to a synthetic chemist.</p>
+      <p class="dim">This is asked once. You can change it later under View.</p>
+
+      <label class="fld"><span>Your field, in a sentence or two</span>
+        <textarea id="setup-desc" placeholder="e.g. Experimental structural biology of membrane transporters, mostly cryo-EM and single-molecule fluorescence."></textarea></label>
+      <label class="fld"><span>Keywords — the work you actually want</span>
+        <input type="text" id="setup-kw" placeholder="membrane proteins, cryo-EM, transporters, single molecule" autocomplete="off"></label>
+      <button class="btn" id="btn-setup">Build my vocabulary</button>
+      <div class="status" id="setup-status"></div>
+
+      <div class="setup-or"><span>or start from a built-in pack</span></div>
+      <div id="pack-list"></div>
+    </div>
+  </div>
+
+  <main>
+    <aside id="rail">
+      <div class="rail-tabs" role="tablist">
+        <button role="tab" aria-selected="true" data-tab="add">Add lab</button>
+        <button role="tab" aria-selected="false" data-tab="labs">Labs</button>
+        <button role="tab" aria-selected="false" data-tab="you" class="you">You</button>
+        <button role="tab" aria-selected="false" data-tab="fit" class="you">Fit</button>
+        <button role="tab" aria-selected="false" data-tab="view">View</button>
+      </div>
+
+      <div class="rail-body" data-panel="add">
+        <label class="fld"><span>Local model</span><select id="f-model"></select></label>
+        <label class="check"><input type="checkbox" id="f-fast"> Fast mode — shorter excerpts, no evidence strings, roughly twice as quick</label>
+        <div class="mono" id="cfg-line"></div>
+        <div class="hr"></div>
+        <label class="fld"><span>PI name</span><input type="text" id="f-name" placeholder="Debora Marks" autocomplete="off"></label>
+        <label class="fld"><span>Institution</span><input type="text" id="f-inst" placeholder="Harvard Medical School" autocomplete="off"></label>
+        <label class="fld"><span>Research focus &amp; recent projects</span>
+          <textarea id="f-desc" placeholder="Paste the lab's research statement, a job ad, or your own notes."></textarea></label>
+        <label class="fld"><span>Publications</span></label>
+        <div class="drop" id="drop"><b>Drop files here</b><br>.md, .txt or .pdf</div>
+        <input type="file" id="f-files" multiple accept=".md,.markdown,.txt,.pdf" hidden>
+        <div class="filelist" id="filelist"></div>
+        <div class="hr"></div>
+        <button class="btn" id="btn-analyse">Analyse and add to map</button>
+        <div class="status" id="status"></div>
+      </div>
+
+      <div class="rail-body" data-panel="labs" hidden>
+        <div id="lablist"></div>
+        <div class="hr"></div>
+        <h4 class="rail-h">Find more labs</h4>
+        <p class="note">Searches OpenAlex for people publishing on what your map is about, weighted toward the direction you stated. Needs at least 5 labs — below that the search has too little signal and returns noise.<br><br>Last authorship is used as a proxy for running the lab. That holds in most of biology and medicine; it fails where author order is alphabetical.</p>
+        <button class="btn ghost" id="btn-discover">Suggest similar labs</button>
+        <div class="status" id="disc-status"></div>
+        <div id="disc-list"></div>
+        <div class="hr"></div>
+        <button class="btn ghost" id="btn-export">Export everything as JSON</button>
+        <div style="height:8px"></div>
+        <button class="btn ghost" id="btn-clear">Clear all labs</button>
+      </div>
+
+      <div class="rail-body" data-panel="you" hidden>
+        <div id="you-empty">
+          <p class="empty">Your profile is read into the same topic vocabulary as the labs, so yours and theirs become directly comparable.<br><br>Add labs first — everything is scored <em>relative to the network</em>, so a profile read against an empty map tells you nothing.</p>
+          <div class="hr"></div>
+          <div class="src-tabs" role="tablist">
+            <button role="tab" aria-selected="true" data-src="oa">Publication record</button>
+            <button role="tab" aria-selected="false" data-src="cv">Upload a CV</button>
+          </div>
+
+          <div data-src="oa">
+            <label class="fld" style="margin-top:14px"><span>Your name or ORCID</span>
+              <input type="text" id="oa-query" placeholder="0000-0002-1825-0097, or your full name" autocomplete="off"></label>
+            <button class="btn ghost sm" id="btn-oa-find">Find my publications</button>
+            <p class="note">Looked up through OpenAlex. Google Scholar has no API and blocks automated access, so a Scholar link cannot be read — an ORCID is the most reliable input, a name usually works.</p>
+            <div id="oa-matches"></div>
+            <label class="fld" style="margin-top:14px"><span>Where you want to go next</span>
+              <textarea id="oa-intent" placeholder="A broad publication record makes ranking mushy. Say what you actually want to do next — it is scored separately from what you have already done."></textarea></label>
+            <button class="btn you" id="btn-oa">Build my profile</button>
+            <div class="status" id="oa-status"></div>
+          </div>
+
+          <div data-src="cv" hidden>
+            <label class="fld" style="margin-top:14px"><span>Your CV</span></label>
+            <div class="drop you" id="cv-drop"><b>Drop your CV here</b><br>.pdf, .md or .txt</div>
+            <input type="file" id="cv-file" accept=".pdf,.md,.markdown,.txt" hidden>
+            <div class="filelist" id="cv-list"></div>
+            <label class="fld" style="margin-top:14px"><span>Anything the CV misses</span>
+              <textarea id="cv-notes" placeholder="Unpublished work, methods you know but never published, what you want to move toward."></textarea></label>
+            <button class="btn you" id="btn-cv">Read my CV</button>
+            <div class="status" id="cv-status"></div>
+          </div>
+        </div>
+        <div id="you-filled" hidden></div>
+      </div>
+
+      <div class="rail-body" data-panel="fit" hidden><div id="fit-body"></div></div>
+
+      <div class="rail-body" data-panel="view" hidden>
+        <div class="ctrl"><span>Link threshold <b id="v-thr">0.12</b></span>
+          <input type="range" id="s-thr" min="0" max="0.6" step="0.01" value="0.12">
+          <div class="note">Hide links below this similarity. Also sets the credibility floor for clusters and bridges.</div></div>
+        <div class="ctrl"><span>Spread <b id="v-spread">1.0</b></span>
+          <input type="range" id="s-spread" min="0.5" max="2" step="0.1" value="1"></div>
+        <div class="hr"></div>
+        <h4 class="rail-h">Your field</h4>
+        <div id="field-line" class="note"></div>
+        <button class="btn ghost sm" id="btn-refield">Change field</button>
+        <div class="hr"></div>
+        <h4 class="rail-h">Topic categories</h4>
+        <div class="legend">
+          <div><i class="swatch" style="background:var(--ch-system)"></i> System — organism, disease, setting</div>
+          <div><i class="swatch" style="background:var(--ch-method)"></i> Method — technique</div>
+          <div><i class="swatch" style="background:var(--ch-theory)"></i> Theory — framework</div>
+          <div><i class="swatch" style="background:var(--ch-application)"></i> Application — translational goal</div>
+          <div><i class="swatch" style="background:var(--you)"></i> You</div>
+        </div>
+        <div class="hr"></div>
+        <h4 class="rail-h">How the numbers are made</h4>
+        <div class="formula">Every lab and your CV become sparse weighted vectors over one shared topic vocabulary.
+
+sim(A,B) = Σ wA·wB / (‖wA‖·‖wB‖)
+idf(t)   = ln(1 + N / (1 + labs holding t))
+
+Foundation = sim(you, lab)
+Leverage   = Σ w·idf·(1 − w_lab) / Σ w·idf
+Growth     = Σ w_lab·(1 − w_you) / Σ w_lab
+Direction  = Σ w_lab·intent_t / Σ w_lab
+
+Growth alone is blind to intent: a lab with twenty
+topics you lack scores high even when none of them
+interest you. Direction is the correction. It is null,
+and its weight is dropped rather than imputed, when
+you have not said where you want to go.
+
+Transfer   = sqrt(portable × targets)
+
+Your method and theory topics the lab lacks are
+portable; their system and application topics you
+lack are where they would go. A pivot needs both.
+
+Leverage is gated by min(1, Foundation/0.15): a lab you share nothing with cannot score well on what you would add to it.
+
+Focus      = 1 − H(weights)/H_max
+Centrality = degree within the lab graph
+Shortlist  = maximal marginal relevance, λ·fit − (1−λ)·redundancy</div>
+      </div>
+    </aside>
+
+    <div id="canvas">
+      <svg id="svg"></svg>
+      <div id="hint"><p><strong>The map is empty</strong>Add three or four labs you are considering. Then upload your CV, and every lab is scored on what you already share, what you would uniquely add, and what you would learn.</p></div>
+      <div id="tip"></div>
+      <div id="detail">
+        <div class="d-head"><button class="d-close" id="d-close" aria-label="Close">✕</button>
+          <h3 id="d-name"></h3><div class="inst" id="d-inst"></div></div>
+        <div class="d-body" id="d-body"></div>
+      </div>
+    </div>
+  </main>
+</div>
+<script type="module" src="./app.js"></script>
+</html>
