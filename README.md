@@ -132,13 +132,13 @@ Each lab and profile is represented as a sparse vector over shared topic labels:
 
 ```json
 {
-  "label": "protein language models",
+  "label": "diffusion models",
   "category": "method",
   "weight": 0.85,
-  "detail": "ensemble-conditioned sequence design for antibody escape",
+  "detail": "ensemble-conditioned structural design of peptide for antibody escape",
   "recency": "emerging",
   "pursuit": 1.0,
-  "evidence": "Last three papers use ESM-style models on HA/NA"
+  "evidence": "Last three papers use diffusion models on HA/NA"
 }
 ```
 
